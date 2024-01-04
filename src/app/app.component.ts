@@ -14,23 +14,7 @@ import { TodoComponentComponent } from './todo-component/todo-component.componen
 export class AppComponent {
   title = 'todo-app';
   indexTobeUpdated: number | undefined;
-  todos: string[] = [
-    'Go to gym',
-    'Make Bread',
-    'a',
-    'b',
-    'c',
-    'Go to gym',
-    'Make Bread',
-    'a',
-    'b',
-    'c',
-    'Go to gym',
-    'Make Bread',
-    'a',
-    'b',
-    'c',
-  ];
+  todos: string[] = ['Go to gym', 'Make Bread'];
   todoInput: string = '';
   hanleAddTodo() {
     if (this.todoInput) {
