@@ -1,5 +1,10 @@
 <div class="single-todo">
-  <h3>{{ todo }}</h3>
+  <input
+    type="checkbox"
+    [checked]="todo?.status === 'Completed'"
+    (click)="handleOnCheck()"
+  />
+  <h3 [class.completed]="todo?.status === 'Completed'">{{ todo?.title }}</h3>
   <div class="buttons">
     <button (click)="handleOnEditClicked()">Edit</button>
     <button (click)="handleOnDeleteClicked()">Delete</button>

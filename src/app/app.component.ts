@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TodoComponentComponent } from './todo-component/todo-component.component';
+import { Observable } from 'rxjs';
+import { TodoService } from './services/todo.service';
+import { Todo } from './types/todo.type';
 
 @Component({
   selector: 'app-root',
@@ -11,27 +14,62 @@ import { TodoComponentComponent } from './todo-component/todo-component.componen
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'todo-app';
-  indexTobeUpdated: number | undefined;
-  todos: string[] = ['Go to gym', 'Make Bread'];
-  todoInput: string = '';
+  idToBeUpdated: number | undefined;
+  todosResp$: Observable<any> | undefined;
+  todos: Todo[] = [];
+  todoInput: string | undefined = '';
+  constructor(private todoService: TodoService) {}
+
+  ngOnInit(): void {
+    this.loadTodos();
+  }
+
+  loadTodos() {
+    this.todosResp$ = this.todoService.getAllTodos();
+    this.todosResp$.subscribe((resp) => (this.todos = resp.data));
+  }
   hanleAddTodo() {
-    if (this.todoInput) {
-      if (this.indexTobeUpdated !== undefined) {
-        this.todos[this.indexTobeUpdated] = this.todoInput;
-        this.indexTobeUpdated = undefined;
-      } else {
-        this.todos.push(this.todoInput);
-      }
-      this.todoInput = '';
+    if (!this.idToBeUpdated) {
+      let todo = {
+        title: this.todoInput,
+      };
+      this.todoService
+        .createTodo(todo)
+        .subscribe((resp: any) => this.todos.push(resp.data));
+    } else {
+      this.todoService
+        .updateTodo(this.idToBeUpdated, {
+          id: this.idToBeUpdated,
+          title: this.todoInput,
+        })
+        .subscribe((resp: any) => {
+          console.log(resp);
+          if (resp.status) {
+            this.loadTodos();
+          }
+        });
     }
+    this.todoInput = '';
   }
-  handleOnDelete(index: number) {
-    this.todos.splice(index, 1);
+
+  handleOnDelete(id: number) {
+    this.todoService.deleteTodo(id).subscribe((resp: any) => {
+      if (resp.status) {
+        this.loadTodos();
+      }
+    });
   }
-  handleOnEdit(index: number) {
-    this.indexTobeUpdated = index;
-    this.todoInput = this.todos[index];
+  handleOnEdit(id: number) {
+    let todo: Todo | undefined = this.todos.find((todo) => (todo.id = id));
+    this.todoInput = todo?.title;
+    this.idToBeUpdated = todo?.id;
+  }
+  handleOnComplete(event: Todo) {
+    const status = event.status === 'Completed' ? 'Pending' : 'Completed';
+    this.todoService
+      .updateTodo(event?.id, { id: event.id, status })
+      .subscribe((_) => this.loadTodos());
   }
 }
