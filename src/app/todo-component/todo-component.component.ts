@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Todo } from '../types/todo.type';
+import { TodoService } from '../services/todo.service';
 
 @Component({
   selector: 'app-todo-component',
@@ -8,20 +10,24 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './todo-component.component.css',
 })
 export class TodoComponentComponent {
+  constructor() {}
   @Input({ required: true })
-  todo: string = '';
-  @Input({ required: true })
-  index: number | undefined;
+  todo: Todo | undefined;
 
   @Output()
   OnDelete = new EventEmitter();
   @Output()
   OnEdit = new EventEmitter();
+  @Output()
+  onComplete = new EventEmitter();
 
   handleOnDeleteClicked() {
-    this.OnDelete.emit(this.index);
+    this.OnDelete.emit(this.todo?.id);
   }
   handleOnEditClicked() {
-    this.OnEdit.emit(this.index);
+    this.OnEdit.emit(this.todo?.id);
+  }
+  handleOnCheck() {
+    this.onComplete.emit(this.todo);
   }
 }
