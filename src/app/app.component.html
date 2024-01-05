@@ -12,12 +12,12 @@
       </button>
       <div class="divider"></div>
       <div class="todo-container">
-        @for(todo of todos; track $index){
+        @for(todo of todos; track todo.id){
         <app-todo-component
           [todo]="todo"
           (OnDelete)="handleOnDelete($event)"
           (OnEdit)="handleOnEdit($event)"
-          [index]="$index"
+          (onComplete)="handleOnComplete($event)"
         ></app-todo-component>
         }
       </div>

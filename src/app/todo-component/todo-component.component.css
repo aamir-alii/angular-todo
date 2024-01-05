@@ -5,6 +5,9 @@
   justify-content: space-between;
   gap: 5px;
 }
+.completed {
+  color: rgb(207, 207, 207);
+}
 .buttons {
   display: flex;
   gap: 10px;
